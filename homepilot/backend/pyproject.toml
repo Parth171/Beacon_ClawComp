@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "homepilot"
+version = "0.1.0"
+description = "Autonomous AI buyer's agent."
+requires-python = ">=3.9"
+dependencies = [
+    "eval-type-backport; python_version < '3.10'",
+    "fastapi",
+    "httpx",
+    "numpy",
+    "opencv-python-headless",
+    "pillow",
+    "pydantic",
+    "pydantic-settings",
+    "uvicorn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx",
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

@@ -1,0 +1,84 @@
+{
+  "_default": {
+    "base_score": 60,
+    "signals": {
+      "population_growth": "moderate"
+    },
+    "reasons": [
+      "Stable established neighborhood with steady demand"
+    ]
+  },
+  "toronto": {
+    "base_score": 78,
+    "signals": {
+      "new_transit_line": true,
+      "transit_project": "Ontario Line subway",
+      "opening_year": 2031,
+      "major_development": true,
+      "population_growth": "high"
+    },
+    "reasons": [
+      "Ontario Line subway expansion improving access",
+      "Sustained high population and immigration growth",
+      "Ongoing mixed-use intensification"
+    ]
+  },
+  "mississauga": {
+    "base_score": 74,
+    "signals": {
+      "new_transit_line": true,
+      "transit_project": "Hazel McCallion LRT",
+      "opening_year": 2025,
+      "major_development": true,
+      "population_growth": "high"
+    },
+    "reasons": [
+      "Hazel McCallion LRT opening boosts connectivity",
+      "Downtown Mississauga densification underway",
+      "Strong regional job and population growth"
+    ]
+  },
+  "waterloo": {
+    "base_score": 80,
+    "signals": {
+      "new_transit_line": true,
+      "transit_project": "ION LRT Stage 2",
+      "opening_year": 2028,
+      "tech_employment_growth": "high",
+      "population_growth": "high"
+    },
+    "reasons": [
+      "ION LRT Stage 2 extension planned",
+      "Fast-growing tech employment base",
+      "University-driven demand keeps vacancy low"
+    ]
+  },
+  "kitchener": {
+    "base_score": 76,
+    "signals": {
+      "new_transit_line": true,
+      "transit_project": "GO two-way all-day rail",
+      "opening_year": 2027,
+      "major_development": true,
+      "population_growth": "high"
+    },
+    "reasons": [
+      "Two-way all-day GO rail to Toronto improving",
+      "Innovation-district redevelopment",
+      "Above-average population growth"
+    ]
+  },
+  "ottawa": {
+    "base_score": 70,
+    "signals": {
+      "new_transit_line": true,
+      "transit_project": "O-Train Stage 2",
+      "opening_year": 2026,
+      "population_growth": "moderate"
+    },
+    "reasons": [
+      "O-Train Stage 2 LRT expansion",
+      "Stable public-sector employment base"
+    ]
+  }
+}

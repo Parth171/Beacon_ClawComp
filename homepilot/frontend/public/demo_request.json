@@ -1,0 +1,85 @@
+{
+  "buyer": {
+    "budget": 1000000,
+    "children": 2,
+    "dog": true,
+    "work_location": "Toronto",
+    "preferred_city": "Toronto",
+    "max_commute_minutes": 45
+  },
+  "properties": [
+    {
+      "id": "riverdale-family-home",
+      "listing_price": 949000,
+      "location": {
+        "address": "Demo Address 1",
+        "city": "Toronto",
+        "province": "ON",
+        "postal_code": "M4K"
+      },
+      "description": "Well maintained move-in ready detached home with updated kitchen, new roof, newer windows, and a fenced backyard.",
+      "photo_urls": [
+        "https://example.com/riverdale-front.jpg",
+        "https://example.com/riverdale-kitchen.jpg",
+        "https://example.com/riverdale-yard.jpg"
+      ],
+      "bedrooms": 4,
+      "bathrooms": 2.5,
+      "square_feet": 2100,
+      "year_built": 2014,
+      "property_type": "detached",
+      "school_score": 91,
+      "safety_score": 84,
+      "park_distance_meters": 280,
+      "commute_minutes": 32
+    },
+    {
+      "id": "mississauga-townhouse",
+      "listing_price": 875000,
+      "location": {
+        "address": "Demo Address 2",
+        "city": "Mississauga",
+        "province": "ON",
+        "postal_code": "L5B"
+      },
+      "description": "Updated townhouse close to transit and shopping with newer windows and finished basement.",
+      "photo_urls": [
+        "https://example.com/mississauga-front.jpg",
+        "https://example.com/mississauga-living.jpg",
+        "https://example.com/mississauga-basement.jpg"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2.5,
+      "square_feet": 1850,
+      "year_built": 2008,
+      "property_type": "townhouse",
+      "school_score": 82,
+      "safety_score": 80,
+      "park_distance_meters": 550,
+      "commute_minutes": 48
+    },
+    {
+      "id": "older-fixer-upper",
+      "listing_price": 799000,
+      "location": {
+        "address": "Demo Address 3",
+        "city": "Toronto",
+        "province": "ON",
+        "postal_code": "M6M"
+      },
+      "description": "As-is fixer with dated finishes, old roof, leak history, and foundation concerns.",
+      "photo_urls": [
+        "https://example.com/fixer-front.jpg"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 1.5,
+      "square_feet": 1700,
+      "year_built": 1968,
+      "property_type": "semi-detached",
+      "school_score": 70,
+      "safety_score": 66,
+      "park_distance_meters": 850,
+      "commute_minutes": 42
+    }
+  ]
+}

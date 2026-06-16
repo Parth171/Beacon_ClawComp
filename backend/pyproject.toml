@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dealsense"
+version = "0.1.0"
+description = "Autonomous real estate underwriting platform (OpenClaw agent graph)."
+requires-python = ">=3.9"
+dependencies = [
+    "eval-type-backport; python_version < '3.10'",
+    "fastapi",
+    "httpx",
+    "numpy",
+    "pydantic",
+    "pydantic-settings",
+    "uvicorn",
+]
+
+[project.optional-dependencies]
+# Computer-vision preprocessing for Agent 3 (image_prep).
+vision = [
+    "opencv-python-headless",
+    "pillow",
+]
+# Local Apple-Silicon inference. Install in a Python 3.11+ env for best
+# mlx-vlm compatibility. Heavy; not required to run the scaffold or tests.
+mlx = [
+    "mlx",
+    "mlx-lm",
+    "mlx-vlm",
+    "outlines",
+]
+# Agent 4 trajectory RAG.
+rag = [
+    "qdrant-client",
+    "sentence-transformers",
+]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"

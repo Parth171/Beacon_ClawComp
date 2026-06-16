@@ -1,0 +1,41 @@
+{
+  "source": "realtor.ca",
+  "url": "https://www.realtor.ca/real-estate/29867678/18-535-windflower-crescent-kitchener",
+  "photoCount": 3,
+  "listing": {
+    "source": "realtor.ca",
+    "id": "29867678",
+    "mlsNumber": "X1234567",
+    "url": "https://www.realtor.ca/real-estate/29867678/18-535-windflower-crescent-kitchener",
+    "listingPrice": 820000,
+    "description": "Motivated seller, sold as-is. Needs some TLC.",
+    "address": {
+      "text": "123 Main St, Toronto, Ontario M5V2T6",
+      "city": "Toronto",
+      "province": "Ontario",
+      "postalCode": "M5V2T6",
+      "latitude": 43.6426,
+      "longitude": -79.3871
+    },
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "squareFeet": 1450,
+    "squareFeetText": "1450",
+    "yearBuilt": 1987,
+    "daysOnMarket": 34,
+    "priceHistory": [
+      { "date": "2024-11-01", "price": 859000 },
+      { "date": "2024-12-15", "price": 835000 },
+      { "date": "2025-01-20", "price": 820000 }
+    ],
+    "propertyType": "Semi-Detached",
+    "buildingType": "House",
+    "annualPropertyTax": 4200,
+    "maintenanceFees": null,
+    "photoUrls": [
+      "https://cdn.realtor.ca/listings/1/highres/8/img_01.jpg",
+      "https://cdn.realtor.ca/listings/1/highres/8/img_02.jpg",
+      "https://cdn.realtor.ca/listings/1/highres/8/img_03.jpg"
+    ]
+  }
+}
