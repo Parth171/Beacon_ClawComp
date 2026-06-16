@@ -1,7 +1,7 @@
 """Smoke-test Agent 3's production InspectionAgent path with local defect images.
 
 Run from backend:
-    DEALSENSE_INFERENCE_BACKEND=mlx ./.venv-mlx/bin/python scripts/test_inspection_agent.py
+    BEACON_INFERENCE_BACKEND=mlx ./.venv-mlx/bin/python scripts/test_inspection_agent.py
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ import cv2
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 os.chdir(BACKEND_ROOT)
 sys.path.insert(0, str(BACKEND_ROOT))
-os.environ.setdefault("DEALSENSE_INFERENCE_BACKEND", "mlx")
+os.environ.setdefault("BEACON_INFERENCE_BACKEND", "mlx")
 
 from app.agents.inspection import InspectionAgent, InspectionInput
 from app.core.config import get_settings

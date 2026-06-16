@@ -34,7 +34,7 @@ class _Emitter:
 
 
 _current: "contextvars.ContextVar[_Emitter | None]" = contextvars.ContextVar(
-    "dealsense_subtask_emitter", default=None
+    "beacon_subtask_emitter", default=None
 )
 
 
@@ -45,11 +45,16 @@ async def report_subtask(
     skill: str | None = None,
     status: str = "running",
     detail: str | None = None,
+    data: dict[str, Any] | None = None,
 ) -> None:
     """Report a subtask update from anywhere inside an active agent run.
 
     No-op when called outside a ``stream_with_subtasks`` context (e.g. tests, the
     non-streaming endpoint), so services can call it unconditionally.
+
+    ``data`` carries an optional structured payload for the UI — e.g. the image
+    URL/index and flags for a single inspected photo — so the frontend can show
+    which photo is being analyzed and highlight the ones with issues.
     """
 
     emitter = _current.get()
@@ -62,6 +67,7 @@ async def report_subtask(
             "skill": skill,
             "status": status,
             "detail": detail,
+            "data": data,
         }
     )
 

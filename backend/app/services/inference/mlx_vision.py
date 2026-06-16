@@ -37,9 +37,13 @@ def _mlx_vlm_installed() -> bool:
 class MLXVisionClient(VisionClient):
     name = "mlx-vision"
 
-    def __init__(self, model_id: str | None = None) -> None:
+    def __init__(
+        self, model_id: str | None = None, adapter_path: str | None = None
+    ) -> None:
         settings = get_settings()
         self.model_id = model_id or settings.vision_model
+        # Explicit override wins; otherwise fall back to settings at load time.
+        self._adapter_path = adapter_path
         self._model: Any = None
         self._processor: Any = None
         self._config: Any = None
@@ -55,6 +59,32 @@ class MLXVisionClient(VisionClient):
 
         self._model, self._processor = load(self.model_id)
         self._config = load_config(self.model_id)
+        self._apply_adapter()
+
+    def _apply_adapter(self) -> None:
+        """Apply the configured LoRA adapter (if any) on top of the base weights.
+
+        The base 4-bit weights stay frozen; only the trained q/k/v/o_proj LoRA
+        deltas are layered in. A missing/empty path leaves the plain base model.
+        """
+        from pathlib import Path
+
+        raw = self._adapter_path or get_settings().vision_adapter_path
+        if not raw:
+            return
+        adapter_dir = Path(raw).expanduser()
+        if not (adapter_dir / "adapter_config.json").exists():
+            logger.warning(
+                "vision_adapter_path %s has no adapter_config.json; using base model",
+                adapter_dir,
+            )
+            return
+        from mlx_vlm.trainer.utils import apply_lora_layers  # lazy
+
+        self._model = apply_lora_layers(self._model, str(adapter_dir))
+        self._model.eval()
+        self.name = "mlx-vision+lora"
+        logger.info("Applied vision LoRA adapter from %s", adapter_dir)
 
     def _decode_images(self, images_base64: list[str]) -> list[Any]:
         # The VLM processor consumes PIL images (or ndarrays) directly; raw byte

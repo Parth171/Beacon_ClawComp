@@ -82,7 +82,7 @@ INSPECTION_SCHEMA = {
 
 def build_prompt(address: str | None, price: int | None, image_count: int) -> str:
     return f"""
-You are Agent 3, the Inspection Intelligence Engine for DealSense.
+You are Agent 3, the Inspection Intelligence Engine for Beacon.
 
 Analyze the provided real estate listing photos for visible condition issues.
 Focus on observable signs only: water damage, roof or exterior deterioration,
@@ -132,7 +132,7 @@ async def load_image_urls(urls: list[str], *, max_side: int) -> list[dict[str, A
     from app.services.image_prep import _encode_jpeg, _resize
 
     loaded = []
-    headers = {"User-Agent": "DealSense-Agent3-Test/0.1"}
+    headers = {"User-Agent": "Beacon-Agent3-Test/0.1"}
     async with httpx.AsyncClient(
         timeout=30.0, follow_redirects=True, headers=headers
     ) as client:

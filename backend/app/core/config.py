@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "DealSense"
+    app_name: str = "Beacon"
     api_prefix: str = "/api/v1"
 
     # --- Inference (local, Apple Silicon / MLX) -------------------------------
@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     text_temperature: float = 0.0
 
     vision_model: str = "mlx-community/Qwen2.5-VL-7B-Instruct-4bit"
+    # Optional LoRA adapter for the vision model. When set to a directory holding
+    # `adapter_config.json` + `adapters.safetensors` (the output of
+    # scripts/train_lora.py), MLXVisionClient applies it on top of the frozen 4-bit
+    # base for defect-tuned inference. Unset -> plain base model (current behaviour).
+    vision_adapter_path: str | None = None
     vision_max_images: int = 8
     # 1024 is needed for Qwen2.5-VL-7B-4bit to resolve thin defects (e.g. hairline
     # foundation cracks) that vanish when downscaled to 768. This was previously
@@ -42,16 +47,21 @@ class Settings(BaseSettings):
     openclaw_fetch_comps_path: str = (
         "~/.openclaw/workspace/skills/fetch-comps.js"
     )
+    # Agent 3 municipal lookup: geocodes an address and pulls NYC Open Data
+    # violations/permits/complaints (the same records regwatch.nyc aggregates).
+    openclaw_fetch_municipal_path: str = (
+        "~/.openclaw/workspace/skills/fetch-municipal.js"
+    )
     openclaw_node_bin: str = "node"
     openclaw_timeout_seconds: float = 90.0
 
     # --- Ledger ---------------------------------------------------------------
-    ledger_db_path: str = "./dealsense.db"
+    ledger_db_path: str = "./beacon.db"
 
     # --- Agent 6 (only external call) ----------------------------------------
     pandadoc_api_key: str | None = None
 
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="DEALSENSE_")
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="BEACON_")
 
 
 @lru_cache

@@ -1,6 +1,6 @@
 """Evidence artifacts.
 
-The core design principle of DealSense is that *evidence flows between agents* —
+The core design principle of Beacon is that *evidence flows between agents* —
 each agent emits structured artifacts (not just scores) that downstream agents and
 the thesis agent reason over. These models are the shared artifact contracts.
 """

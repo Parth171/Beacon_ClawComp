@@ -10,6 +10,7 @@ from __future__ import annotations
 from pydantic import Field
 
 from app.models.evidence import BreakdownItem, Evidence
+from app.models.municipal import MunicipalRiskResult
 from app.models.property import _CamelModel
 
 
@@ -48,6 +49,9 @@ class InspectionResult(_CamelModel):
     evidence: list[Evidence] = Field(default_factory=list)
     breakdown: list[BreakdownItem] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    # Municipal risk (NYC violations/permits/complaints) when the address resolves
+    # to a NYC parcel; None for non-NYC addresses or when lookup is disabled.
+    municipal: MunicipalRiskResult | None = None
 
 
 # JSON schema handed to the VLM for EACH image. Deliberately hand-written (no $defs)

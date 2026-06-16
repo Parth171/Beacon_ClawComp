@@ -6,7 +6,7 @@ OutputT = TypeVar("OutputT")
 
 
 class Agent(ABC, Generic[InputT, OutputT]):
-    """Base protocol for all DealSense agents.
+    """Base protocol for all Beacon agents.
 
     Each agent reads a typed input (often including upstream agents' evidence) and
     returns a structured, schema-validated result. No free-text handoffs.

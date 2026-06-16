@@ -1,4 +1,4 @@
-# DealSense Backend
+# Beacon Backend
 
 Autonomous real-estate underwriting. A URL goes in; an agent graph (Data Collection
 → Inspection → Valuation → Trajectory → Synthesis → Thesis → PandaDoc) produces a
@@ -36,7 +36,7 @@ pip install -e ".[mlx,vision,rag]"
 ```
 
 With MLX installed and the models pulled, `/api/v1/health` reports the `mlx-text`
-and `mlx-vision` clients instead of the stubs. Set `DEALSENSE_INFERENCE_BACKEND=mlx`
+and `mlx-vision` clients instead of the stubs. Set `BEACON_INFERENCE_BACKEND=mlx`
 to require them (fails loudly if missing).
 
 ## Tests

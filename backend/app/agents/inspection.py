@@ -27,6 +27,7 @@ from app.models.inspection import (
     PerImageAssessment,
     VisualFlag,
 )
+from app.models.municipal import MunicipalRecords
 from app.models.property import CanonicalProperty
 from app.services.inference.base import VisionClient
 from app.services.progress import report_subtask
@@ -96,6 +97,8 @@ PROMPT = (
 
 # A function that turns image URLs into base64 JPEGs (image_prep). Injectable for tests.
 ImagePreparer = Callable[[list[str]], Awaitable[list[Any]]]
+# Looks up an address's NYC municipal records. Injectable for tests.
+MunicipalFetcher = Callable[[str], Awaitable[MunicipalRecords]]
 
 
 class InspectionInput(BaseModel):
@@ -110,13 +113,25 @@ class InspectionAgent(Agent[InspectionInput, InspectionResult]):
         vision_client: VisionClient | None = None,
         image_preparer: ImagePreparer | None = None,
         flag_threshold: float = FLAG_EVIDENCE_THRESHOLD,
+        municipal_fetcher: MunicipalFetcher | None = None,
+        enable_municipal: bool = True,
     ) -> None:
         self._vision = vision_client
         self._prepare = image_preparer
         self._flag_threshold = flag_threshold
+        # Municipal lookup is best-effort and address-gated: it only fires when the
+        # property has an address, and silently degrades for non-NYC addresses
+        # (GeoSearch returns no NYC parcel) so the visual run is never blocked.
+        self._municipal = municipal_fetcher
+        self._enable_municipal = enable_municipal
 
     async def run(self, payload: InspectionInput) -> InspectionResult:
         prop = payload.property
+        result = await self._run_visual(prop)
+        result = await self._augment_municipal(result, prop)
+        return result
+
+    async def _run_visual(self, prop: CanonicalProperty) -> InspectionResult:
         prepared = await self._prepare_images(prop.images)
         if not prepared:
             return self._empty_result("No usable listing photos to analyze.")
@@ -127,20 +142,92 @@ class InspectionAgent(Agent[InspectionInput, InspectionResult]):
         )
 
         assessments: list[PerImageAssessment] = []
+        total = len(prepared)
         for index, image in enumerate(prepared):
             b64 = getattr(image, "jpeg_base64", image)
             url = getattr(image, "url", None)
+            # Per-image "now analyzing photo i/N" event so the UI can show each
+            # photo lighting up as the (thread-pinned, sequential) VLM works.
+            await report_subtask(
+                "inspection_image",
+                f"Analyzing photo {index + 1} of {total}",
+                skill="mlx-vlm",
+                data={"imageIndex": index, "imageUrl": url},
+            )
             try:
                 raw = await client.analyze([b64], PROMPT, PER_IMAGE_SCHEMA)
             except Exception as exc:  # noqa: BLE001 - one bad image must not kill the run
                 logger.warning("Vision call failed on image %s: %s", index, exc)
+                await report_subtask(
+                    "inspection_image",
+                    f"Photo {index + 1} could not be analyzed",
+                    skill="mlx-vlm",
+                    status="error",
+                    data={"imageIndex": index, "imageUrl": url},
+                )
                 continue
-            assessments.append(_assessment_from_vlm(raw, index, url))
+            assessment = _assessment_from_vlm(raw, index, url)
+            assessments.append(assessment)
+            # Result event carrying the flags found on THIS photo, so the frontend
+            # can spotlight the exact images that have issues.
+            await report_subtask(
+                "inspection_image",
+                _photo_summary(index + 1, assessment),
+                skill="mlx-vlm",
+                status="done",
+                data={
+                    "imageIndex": index,
+                    "imageUrl": url,
+                    "hasIssues": bool(assessment.flags),
+                    "flags": [
+                        {
+                            "issue": f.issue,
+                            "location": f.location,
+                            "confidence": round(f.confidence, 2),
+                        }
+                        for f in assessment.flags
+                    ],
+                },
+            )
 
         if not assessments:
             return self._empty_result("Vision model returned no usable assessments.")
 
         return self._aggregate(assessments, model=getattr(client, "name", "unknown"))
+
+    # --- municipal augmentation ---------------------------------------------
+
+    async def _augment_municipal(
+        self, result: InspectionResult, prop: CanonicalProperty
+    ) -> InspectionResult:
+        """Attach NYC municipal risk to the result. Best-effort: any failure
+        (non-NYC address, lookup error) leaves the visual result untouched."""
+
+        if not self._enable_municipal or not prop.address:
+            return result
+
+        fetcher = self._municipal or self._default_municipal_fetcher
+        try:
+            records = await fetcher(prop.address)
+            from app.services.municipal_risk import score_municipal
+
+            risk = score_municipal(records)
+        except Exception as exc:  # noqa: BLE001 - municipal data is supplementary
+            logger.info("Municipal lookup skipped for %s: %s", prop.address, exc)
+            result.notes.append(f"Municipal lookup unavailable: {exc}")
+            return result
+
+        result.municipal = risk
+        # Surface municipal signals as evidence/breakdown alongside visual findings
+        # so the downstream chain reasons over a unified picture.
+        result.evidence.extend(risk.evidence)
+        result.breakdown.extend(risk.breakdown)
+        return result
+
+    async def _default_municipal_fetcher(self, address: str) -> MunicipalRecords:
+        from app.services.municipal import fetch_municipal
+
+        return await fetch_municipal(address)
 
     # --- image acquisition --------------------------------------------------
 
@@ -319,6 +406,16 @@ def _assessment_from_vlm(raw: dict, index: int, url: str | None) -> PerImageAsse
         renovation_score=_clamp_int(raw.get("renovationScore", 0), 0, 100),
         flags=flags,
     )
+
+
+def _photo_summary(number: int, assessment: PerImageAssessment) -> str:
+    """One-line human summary of a photo's read, for the progress stream."""
+    if not assessment.flags:
+        return f"Photo {number}: no visible issues"
+    top = max(assessment.flags, key=lambda f: f.confidence)
+    extra = len(assessment.flags) - 1
+    suffix = f" (+{extra} more)" if extra > 0 else ""
+    return f"Photo {number}: {top.issue}{suffix}"
 
 
 def _categorize(text: str) -> str | None:

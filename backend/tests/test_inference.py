@@ -40,7 +40,7 @@ async def test_stub_vision_client_counts_images():
 
 
 def test_registry_stub_backend(monkeypatch):
-    monkeypatch.setenv("DEALSENSE_INFERENCE_BACKEND", "stub")
+    monkeypatch.setenv("BEACON_INFERENCE_BACKEND", "stub")
     from app.core.config import get_settings
     from app.services.inference import registry
 

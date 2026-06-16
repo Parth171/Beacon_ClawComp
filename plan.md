@@ -1,10 +1,10 @@
-# DealSense — OpenClaw Architecture Specification
+# Beacon — OpenClaw Architecture Specification
 
 ---
 
 ## Vision
 
-DealSense is an autonomous real estate underwriting platform. The user provides a listing URL. OpenClaw coordinates a graph of specialized agents that evaluate valuation, structural risk, neighborhood trajectory, and appreciation potential. I want it do the user can either give a link, or the system finds it for the user. 
+Beacon is an autonomous real estate underwriting platform. The user provides a listing URL. OpenClaw coordinates a graph of specialized agents that evaluate valuation, structural risk, neighborhood trajectory, and appreciation potential. I want it do the user can either give a link, or the system finds it for the user. 
 
 Every listing gets a full run. The recommendation is an output, not a gate. A PASS still produces a complete investment report — no LOI is generated, but the analysis is never withheld.
 

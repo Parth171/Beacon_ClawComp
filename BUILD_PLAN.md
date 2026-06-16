@@ -1,4 +1,4 @@
-# DealSense — Refined Build Plan
+# Beacon — Refined Build Plan
 
 Companion to `plan.md`. This file records the resolved architecture decisions, the
 reuse map from the deprecated `homepilot/` code, and the sequenced to-do list.
@@ -80,7 +80,7 @@ and the canonical schema before Valuation can be meaningful.
 ## Sequenced to-do (what to do first)
 
 **Phase 0 — Foundation (do first; everything depends on it)**
-1. Scaffold the DealSense backend by forking the homepilot structure (FastAPI app, config, base agent, progress streaming, models) and rebranding.
+1. Scaffold the Beacon backend by forking the homepilot structure (FastAPI app, config, base agent, progress streaming, models) and rebranding.
 2. Build the MLX inference layer (mlx-vlm + MLX-LM + outlines/llguidance constrained JSON). Replaces Ollama.
 3. Build the SQLite ledger (run + per-agent output + state schema, read/write helpers).
 
