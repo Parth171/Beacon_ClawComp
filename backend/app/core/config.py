@@ -22,9 +22,12 @@ class Settings(BaseSettings):
 
     vision_model: str = "mlx-community/Qwen2.5-VL-7B-Instruct-4bit"
     vision_max_images: int = 8
-    # 768 is the stable ceiling for Qwen2.5-VL-7B-4bit here; 1024 produces too many
-    # vision tokens and segfaults MLX during generation.
-    vision_image_max_side: int = 768
+    # 1024 is needed for Qwen2.5-VL-7B-4bit to resolve thin defects (e.g. hairline
+    # foundation cracks) that vanish when downscaled to 768. This was previously
+    # capped at 768 because 1024 segfaulted MLX, but the per-image _clear_cache() in
+    # MLXVisionClient now releases Metal buffers between photos; verified stable over
+    # 8 sequential full-resolution generations.
+    vision_image_max_side: int = 1024
     vision_max_tokens: int = 640
     vision_temperature: float = 0.0
 
