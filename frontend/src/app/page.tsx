@@ -9,7 +9,6 @@ import Pillars from "@/components/sections/pillars";
 import Pipeline from "@/components/sections/pipeline";
 import Statement from "@/components/sections/statement";
 import Stats from "@/components/sections/stats";
-import Testimonials from "@/components/sections/testimonials";
 
 export default function Home() {
   return (
@@ -23,7 +22,6 @@ export default function Home() {
         <Stats />
         <Pipeline />
         <Difference />
-        <Testimonials />
         <Faq />
         <Cta />
       </main>

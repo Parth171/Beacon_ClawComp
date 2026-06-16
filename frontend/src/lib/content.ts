@@ -12,7 +12,6 @@ import {
 export const NAV_LINKS = [
   { label: "Product", href: "#pillars" },
   { label: "How it works", href: "#pipeline" },
-  { label: "Customers", href: "#customers" },
   { label: "FAQ", href: "#faq" },
 ] as const;
 
@@ -59,7 +58,7 @@ export const PILLARS: Pillar[] = [
   {
     tag: "Valuation",
     title: "Price the deal against the live market.",
-    body: "DealSense pulls live comparables, adjusts for condition, and reads the listing text and price cuts to surface mispricing and the seller's urgency.",
+    body: "Beacon pulls live comparables, adjusts for condition, and reads the listing text and price cuts to surface mispricing and the seller's urgency.",
     points: ["Condition-adjusted comps", "Mispricing vs. asking", "Seller-urgency signals"],
     visual: "valuation",
   },
@@ -87,7 +86,7 @@ export const DIFFERENCE: Difference[] = [
   {
     icon: FileSignature,
     title: "Documents, drafted",
-    body: "On a BUY, DealSense pre-fills the Letter of Intent and a shareable, fully-cited underwriting report.",
+    body: "On a BUY, Beacon pre-fills the Letter of Intent and a shareable, fully-cited underwriting report.",
   },
   {
     icon: Lock,
@@ -153,7 +152,7 @@ export type Testimonial = {
 export const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      "DealSense compressed our first-pass underwriting from a full afternoon to a coffee break. The conflict flags alone have killed two deals we'd have regretted.",
+      "Beacon compressed our first-pass underwriting from a full afternoon to a coffee break. The conflict flags alone have killed two deals we'd have regretted.",
     name: "Maya Ellison",
     role: "Principal",
     company: "Cedarline Capital",
@@ -189,7 +188,7 @@ export const FAQS: Faq[] = [
   },
   {
     q: "Which listing sites are supported?",
-    a: "Public listing URLs such as Realtor.ca and Zillow. DealSense scrapes the canonical property data — price, address, photos, and price history — automatically.",
+    a: "Public listing URLs such as Realtor.ca and Zillow. Beacon scrapes the canonical property data — price, address, photos, and price history — automatically.",
   },
   {
     q: "How accurate is the computer-vision inspection?",
@@ -201,7 +200,7 @@ export const FAQS: Faq[] = [
   },
   {
     q: "Can I export the LOI and the report?",
-    a: "Yes. On a BUY, DealSense pre-fills a Letter of Intent; on either verdict it produces a shareable, fully-cited underwriting report.",
+    a: "Yes. On a BUY, Beacon pre-fills a Letter of Intent; on either verdict it produces a shareable, fully-cited underwriting report.",
   },
   {
     q: "Why would it recommend PASS — and can I still see the analysis?",

@@ -12,7 +12,7 @@ export default function Statement() {
         <div className="mt-12 grid gap-8 border-t border-line pt-8 sm:grid-cols-[1fr_1.3fr] sm:items-start">
           <Eyebrow>Why it matters</Eyebrow>
           <p className="max-w-xl text-lg leading-relaxed text-ink-muted">
-            Most tools hand you a number. DealSense hands you the reasoning — corroborating
+            Most tools hand you a number. Beacon hands you the reasoning — corroborating
             evidence, conflicts named in the open, and a citation behind every claim — so your
             committee sees exactly how the verdict was reached.
           </p>

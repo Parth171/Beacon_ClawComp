@@ -10,11 +10,11 @@ export default function Cta() {
           Ready to underwrite smarter?
         </h2>
         <p className="mx-auto mt-5 max-w-lg text-lg leading-relaxed text-ink-muted">
-          See DealSense run on one of your live listings — an evidence-backed BUY or PASS before the
+          See Beacon run on one of your live listings — an evidence-backed BUY or PASS before the
           showing ends.
         </p>
         <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button href="mailto:hello@dealsense.ai" variant="primary" className="px-6">
+          <Button href="mailto:hello@beacon.ai" variant="primary" className="px-6">
             Request a demo
             <ArrowRight className="h-4 w-4" />
           </Button>

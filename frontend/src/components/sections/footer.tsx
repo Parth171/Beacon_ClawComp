@@ -7,7 +7,6 @@ const COLUMNS = [
     links: [
       { label: "What it does", href: "#pillars" },
       { label: "How it works", href: "#pipeline" },
-      { label: "Customers", href: "#customers" },
       { label: "FAQ", href: "#faq" },
     ],
   },
@@ -17,7 +16,7 @@ const COLUMNS = [
       { label: "About", href: "#" },
       { label: "Careers", href: "#" },
       { label: "Blog", href: "#" },
-      { label: "Contact", href: "mailto:hello@dealsense.ai" },
+      { label: "Contact", href: "mailto:hello@beacon.ai" },
     ],
   },
   {
@@ -67,7 +66,7 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-line pt-8 sm:flex-row sm:items-center">
-          <p className="text-xs text-ink-faint">© {year} DealSense. All rights reserved.</p>
+          <p className="text-xs text-ink-faint">© {year} Beacon. All rights reserved.</p>
           <p className="text-xs text-ink-faint">
             Runs locally on Apple Silicon · No data leaves your network.
           </p>

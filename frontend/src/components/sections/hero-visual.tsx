@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 const ACCENT = "#c0573b";
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-/** Abstract terracotta radar line-art — the DealSense "sense" motif. */
+/** Abstract terracotta radar line-art — the Beacon motif. */
 export function HeroVisual() {
   const reduce = useReducedMotion();
 

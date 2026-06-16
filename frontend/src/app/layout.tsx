@@ -21,12 +21,12 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "DealSense — Autonomous real estate underwriting",
+  title: "Beacon — Autonomous real estate underwriting",
   description:
     "Paste a listing URL and get an evidence-backed BUY or PASS in minutes. Computer-vision inspection, live-comp valuation, and neighborhood trajectory — all running locally.",
-  metadataBase: new URL("https://dealsense.ai"),
+  metadataBase: new URL("https://beacon.ai"),
   openGraph: {
-    title: "DealSense — Autonomous real estate underwriting",
+    title: "Beacon — Autonomous real estate underwriting",
     description: "From listing URL to evidence-backed BUY/PASS in minutes. Private by default.",
     type: "website",
   },

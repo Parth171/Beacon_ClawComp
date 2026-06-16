@@ -27,12 +27,12 @@ export default function Hero() {
       <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
         <div>
           <motion.div {...up(0)}>
-            <Eyebrow>Autonomous underwriting</Eyebrow>
+            <Eyebrow>Autonomous real-estate</Eyebrow>
           </motion.div>
 
           <motion.h1
             {...up(0.06)}
-            className="mt-6 max-w-xl font-serif text-[2.85rem] font-normal leading-[1.05] tracking-[-0.01em] text-ink sm:text-6xl lg:text-[4.3rem]"
+            className="mt-6 max-w-2xl font-serif text-[3.25rem] font-normal leading-[1.02] tracking-[-0.015em] text-ink sm:text-7xl lg:text-[5.25rem]"
           >
             Underwrite any deal in minutes.
           </motion.h1>
@@ -41,8 +41,9 @@ export default function Hero() {
             {...up(0.12)}
             className="mt-7 max-w-md text-lg leading-relaxed text-ink-muted"
           >
-            DealSense turns a listing URL into an evidence-backed BUY or PASS. Six specialist agents
-            inspect the photos, price the deal, and map the neighborhood — all running locally.
+            <span className="font-medium text-accent">Beacon</span> turns a listing URL into an
+            evidence-backed BUY or PASS. Six specialist agents inspect the photos, price the deal,
+            and map the neighborhood — all running locally.
           </motion.p>
 
           <motion.div {...up(0.18)} className="mt-9 flex flex-col gap-3 sm:flex-row">
