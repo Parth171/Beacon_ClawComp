@@ -25,6 +25,7 @@ from app.services.inference.base import (
     TextClient,
     coerce_to_schema,
     extract_json,
+    schema_hint,
 )
 from app.services.progress import report_subtask
 
@@ -75,8 +76,9 @@ class MLXTextClient(TextClient):
     ) -> dict[str, Any]:
         self._ensure_loaded()
         formatted = self._format_prompt(
-            f"{prompt}\n\nReturn ONLY a JSON object matching this schema:\n"
-            f"{json.dumps(schema)}",
+            f"{prompt}\n\nRespond with ONLY a JSON object of exactly this shape, "
+            f"replacing each <placeholder> with a real value:\n"
+            f"{json.dumps(schema_hint(schema))}",
             system,
         )
 

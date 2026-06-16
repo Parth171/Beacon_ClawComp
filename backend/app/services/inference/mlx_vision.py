@@ -23,6 +23,7 @@ from app.services.inference.base import (
     VisionClient,
     coerce_to_schema,
     extract_json,
+    schema_hint,
 )
 from app.services.progress import report_subtask
 
@@ -80,8 +81,9 @@ class MLXVisionClient(VisionClient):
 
         images = self._decode_images(images_base64)
         full_prompt = (
-            f"{prompt}\n\nReturn ONLY a JSON object matching this schema:\n"
-            f"{json.dumps(schema)}"
+            f"{prompt}\n\nRespond with ONLY a JSON object of exactly this shape, "
+            f"replacing each <placeholder> with a real value:\n"
+            f"{json.dumps(schema_hint(schema))}"
         )
         formatted = apply_chat_template(
             self._processor, self._config, full_prompt, num_images=len(images)

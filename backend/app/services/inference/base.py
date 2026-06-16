@@ -67,24 +67,85 @@ class VisionClient(ABC):
 # JSON-schema helpers shared by every backend.
 # --------------------------------------------------------------------------- #
 
-_JSON_OBJECT_RE = re.compile(r"\{.*\}", re.DOTALL)
+_FENCE_RE = re.compile(r"```(?:json)?\s*(.*?)```", re.DOTALL)
 
 
 def extract_json(text: str) -> dict[str, Any]:
-    """Best-effort extraction of a single JSON object from model text."""
+    """Extract the first complete JSON object from model text.
+
+    Unconstrained models often wrap JSON in ``` fences or trail commentary/extra
+    objects after it. We strip fences, then scan for the first *balanced* brace span
+    that parses — robust to trailing prose and repeated objects (a greedy ``{.*}``
+    regex would swallow both and fail).
+    """
 
     text = text.strip()
     try:
         return json.loads(text)
     except json.JSONDecodeError:
         pass
-    match = _JSON_OBJECT_RE.search(text)
-    if not match:
-        raise InferenceError(f"No JSON object found in model output: {text[:200]!r}")
-    try:
-        return json.loads(match.group(0))
-    except json.JSONDecodeError as exc:
-        raise InferenceError(f"Model output was not valid JSON: {exc}") from exc
+
+    fence = _FENCE_RE.search(text)
+    if fence:
+        try:
+            return json.loads(fence.group(1).strip())
+        except json.JSONDecodeError:
+            text = fence.group(1).strip()
+
+    start = text.find("{")
+    while start != -1:
+        depth = 0
+        in_str = False
+        esc = False
+        for i in range(start, len(text)):
+            ch = text[i]
+            if in_str:
+                if esc:
+                    esc = False
+                elif ch == "\\":
+                    esc = True
+                elif ch == '"':
+                    in_str = False
+            elif ch == '"':
+                in_str = True
+            elif ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    candidate = text[start : i + 1]
+                    try:
+                        return json.loads(candidate)
+                    except json.JSONDecodeError:
+                        break  # malformed; try next opening brace
+        start = text.find("{", start + 1)
+
+    raise InferenceError(f"No parseable JSON object in model output: {text[:200]!r}")
+
+
+def schema_hint(schema: JSONSchema) -> Any:
+    """Build an example-shaped value with typed placeholders for prompting.
+
+    Unconstrained models echo a raw JSON Schema (``type``/``properties``/``required``)
+    back at you. Showing them the *output shape* instead — e.g.
+    ``{"sellerUrgency": "<number>", "signals": ["<string>"]}`` — yields clean results.
+    """
+
+    if "enum" in schema and schema["enum"]:
+        return "<one of: " + " | ".join(str(e) for e in schema["enum"]) + ">"
+
+    schema_type = schema.get("type")
+    if isinstance(schema_type, list):
+        schema_type = next((t for t in schema_type if t != "null"), schema_type[0])
+
+    if schema_type == "object" or "properties" in schema:
+        props: dict[str, JSONSchema] = schema.get("properties", {})
+        return {key: schema_hint(sub) for key, sub in props.items()}
+    if schema_type == "array":
+        return [schema_hint(schema.get("items", {}))]
+    if schema_type in ("integer", "number", "string", "boolean"):
+        return f"<{schema_type}>"
+    return "<value>"
 
 
 def schema_default(schema: JSONSchema) -> Any:

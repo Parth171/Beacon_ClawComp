@@ -49,3 +49,4 @@ class CanonicalProperty(_CamelModel):
     latitude: float | None = None
     longitude: float | None = None
     postal_code: str | None = None
+    city: str | None = None  # used by Agent 2 to find comparable listings

@@ -83,6 +83,7 @@ def map_listing_to_canonical(payload: dict[str, Any]) -> CanonicalProperty:
             latitude=address.get("latitude"),
             longitude=address.get("longitude"),
             postal_code=address.get("postalCode"),
+            city=address.get("city"),
         )
     except ValidationError as exc:
         raise OpenClawError(f"Listing could not be mapped to canonical schema: {exc}") from exc

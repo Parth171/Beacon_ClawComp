@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     openclaw_fetch_listings_path: str = (
         "~/.openclaw/workspace/skills/fetch-listings.js"
     )
+    openclaw_fetch_comps_path: str = (
+        "~/.openclaw/workspace/skills/fetch-comps.js"
+    )
     openclaw_node_bin: str = "node"
     openclaw_timeout_seconds: float = 90.0
 
