@@ -11,11 +11,12 @@ this module costs nothing when MLX is not installed.
 
 from __future__ import annotations
 
-import asyncio
 import importlib
 import json
 import logging
 from typing import Any
+
+from app.services.inference._executor import run_on_mlx_thread
 
 from app.core.config import get_settings
 from app.services.inference.base import (
@@ -132,7 +133,7 @@ class MLXTextClient(TextClient):
         tokens = settings.text_max_tokens if max_tokens is None else max_tokens
         await report_subtask("text_llm", f"Generating with {self.model_id}", skill="MLX-LM")
         try:
-            result = await asyncio.to_thread(
+            result = await run_on_mlx_thread(
                 self._generate_blocking, prompt, schema, system, temp, tokens
             )
         except InferenceError:

@@ -8,12 +8,13 @@ prompt instructing strict JSON). All MLX imports are lazy.
 
 from __future__ import annotations
 
-import asyncio
 import base64
 import importlib
 import json
 import logging
 from typing import Any
+
+from app.services.inference._executor import run_on_mlx_thread
 
 from app.core.config import get_settings
 from app.services.inference.base import (
@@ -85,19 +86,39 @@ class MLXVisionClient(VisionClient):
         formatted = apply_chat_template(
             self._processor, self._config, full_prompt, num_images=len(images)
         )
-        result = generate(
-            self._model,
-            self._processor,
-            formatted,
-            image=images,
-            temperature=temperature,
-            verbose=False,
-        )
+        try:
+            result = generate(
+                self._model,
+                self._processor,
+                formatted,
+                image=images,
+                temperature=temperature,
+                max_tokens=get_settings().vision_max_tokens,
+                verbose=False,
+            )
+        finally:
+            # Release GPU buffers between images. Without this, sequential calls on
+            # detailed photos accumulate Metal memory and segfault the process.
+            self._clear_cache()
         # mlx_vlm 0.6.x returns a GenerationResult(.text); older returns str/tuple.
         text = getattr(result, "text", result)
         if isinstance(text, tuple):
             text = text[0]
         return coerce_to_schema(extract_json(text), schema)
+
+    @staticmethod
+    def _clear_cache() -> None:
+        try:
+            import mlx.core as mx
+
+            # API moved between mlx versions: prefer top-level, fall back to metal.
+            clear = getattr(mx, "clear_cache", None) or getattr(
+                getattr(mx, "metal", None), "clear_cache", None
+            )
+            if clear is not None:
+                clear()
+        except Exception:  # noqa: BLE001
+            pass
 
     async def analyze(
         self,
@@ -119,7 +140,7 @@ class MLXVisionClient(VisionClient):
             skill="mlx-vlm",
         )
         try:
-            result = await asyncio.to_thread(
+            result = await run_on_mlx_thread(
                 self._analyze_blocking, images_base64, prompt, schema, temp
             )
         except InferenceError:

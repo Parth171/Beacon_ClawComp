@@ -22,7 +22,10 @@ class Settings(BaseSettings):
 
     vision_model: str = "mlx-community/Qwen2.5-VL-7B-Instruct-4bit"
     vision_max_images: int = 8
-    vision_image_max_side: int = 1024
+    # 768 is the stable ceiling for Qwen2.5-VL-7B-4bit here; 1024 produces too many
+    # vision tokens and segfaults MLX during generation.
+    vision_image_max_side: int = 768
+    vision_max_tokens: int = 640
     vision_temperature: float = 0.0
 
     # --- Agent 4 RAG ----------------------------------------------------------

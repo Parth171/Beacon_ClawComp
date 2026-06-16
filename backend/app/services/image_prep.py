@@ -112,8 +112,20 @@ async def prepare_listing_images(
     return selected
 
 
+# Some photo CDNs (e.g. Wikimedia) reject requests without a browser User-Agent.
+_DOWNLOAD_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept": "image/avif,image/webp,image/jpeg,image/png,*/*",
+}
+
+
 async def _download_all(urls: list[str]) -> list[tuple[str, bytes | None]]:
-    async with httpx.AsyncClient(timeout=20.0, follow_redirects=True) as client:
+    async with httpx.AsyncClient(
+        timeout=20.0, follow_redirects=True, headers=_DOWNLOAD_HEADERS
+    ) as client:
         tasks = [_download_one(client, url) for url in urls]
         return await asyncio.gather(*tasks)
 
