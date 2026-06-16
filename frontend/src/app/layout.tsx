@@ -21,14 +21,15 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "Beacon — Autonomous real estate underwriting",
+  title: "Beacon | Autonomous Real-estate",
   description:
     "Paste a listing URL and get an evidence-backed BUY or PASS in minutes. Computer-vision inspection, live-comp valuation, and neighborhood trajectory — all running locally.",
   metadataBase: new URL("https://beacon.ai"),
   openGraph: {
-    title: "Beacon — Autonomous real estate underwriting",
+    title: "Beacon | Autonomous Real-estate",
     description: "From listing URL to evidence-backed BUY/PASS in minutes. Private by default.",
     type: "website",
+    images: [{ url: "/beacon-logo.png", width: 554, height: 451, alt: "beacon" }],
   },
 };
 
