@@ -34,7 +34,7 @@ export default function Hero() {
             {...up(0.06)}
             className="mt-6 max-w-2xl font-serif text-[3.25rem] font-normal leading-[1.02] tracking-[-0.015em] text-ink sm:text-7xl lg:text-[5.25rem]"
           >
-            Underwrite any deal in minutes.
+            Underwrite any deal in seconds.
           </motion.h1>
 
           <motion.p

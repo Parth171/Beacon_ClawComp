@@ -40,7 +40,7 @@ export function Footer() {
             <Logo />
             <p className="mt-4 text-sm leading-7 text-ink-muted">
               Autonomous real estate underwriting that runs locally — from listing URL to a cited
-              BUY or PASS in minutes.
+              BUY or PASS in seconds.
             </p>
           </div>
 

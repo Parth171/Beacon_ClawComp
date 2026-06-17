@@ -33,7 +33,7 @@ export type Stat = {
 };
 
 export const STATS: Stat[] = [
-  { to: 5, suffix: " min", label: "Median time to a complete underwrite" },
+  { to: 5, suffix: " sec", label: "Median time to a complete underwrite" },
   { to: 6, label: "Specialist agents reviewing every deal" },
   { to: 12, suffix: "+", label: "Trajectory signals weighted by evidence" },
   { to: 100, suffix: "%", label: "Local inference — nothing leaves your network" },
@@ -188,7 +188,7 @@ export const FAQS: Faq[] = [
   },
   {
     q: "Which listing sites are supported?",
-    a: "Public listing URLs such as Realtor.ca and Zillow. Beacon scrapes the canonical property data — price, address, photos, and price history — automatically.",
+    a: "Public listing URLs from Realtor.ca, Realtor.com, and Redfin. Beacon scrapes the canonical property data — price, address, photos, and price history — automatically.",
   },
   {
     q: "How accurate is the computer-vision inspection?",
