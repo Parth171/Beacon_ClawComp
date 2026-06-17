@@ -42,8 +42,8 @@ export function Navbar() {
           <Link href="#cta" className="text-sm text-ink-muted transition-colors hover:text-ink">
             Sign in
           </Link>
-          <Button href="#cta" variant="primary" className="h-10 px-4">
-            Request a demo
+          <Button href="/analyze" variant="primary" className="h-10 px-4">
+            Analyze a listing
           </Button>
         </div>
 
@@ -78,8 +78,8 @@ export function Navbar() {
                   {l.label}
                 </Link>
               ))}
-              <Button href="#cta" variant="primary" className="mt-3">
-                Request a demo
+              <Button href="/analyze" variant="primary" className="mt-3">
+                Analyze a listing
               </Button>
             </div>
           </motion.nav>

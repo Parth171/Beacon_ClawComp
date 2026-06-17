@@ -14,8 +14,8 @@ export default function Cta() {
           showing ends.
         </p>
         <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button href="mailto:hello@beacon.ai" variant="primary" className="px-6">
-            Request a demo
+          <Button href="/analyze" variant="primary" className="px-6">
+            Analyze a listing
             <ArrowRight className="h-4 w-4" />
           </Button>
           <Button href="#pipeline" variant="secondary" className="px-6">
