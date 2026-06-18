@@ -1004,29 +1004,25 @@ function EngineSlide({ slide }: { slide: SlideData }) {
 function TierCard({ tier }: { tier: MarketTier }) {
   const value = productOf(tier.variables);
   return (
-    <Card className="flex flex-col gap-2 bg-canvas">
+    <Card className="flex flex-col gap-1.5 bg-canvas p-3">
       <div className="flex items-baseline justify-between gap-3">
         <div className="flex items-baseline gap-2">
           <span className="rounded bg-ink px-1.5 py-0.5 font-mono text-[10px] font-medium tracking-[0.12em] text-canvas">
             {tier.key}
           </span>
-          <span className="text-[13px] font-medium text-ink">{tier.label}</span>
+          <span className="text-[12px] font-medium text-ink">{tier.label}</span>
         </div>
-        <span className="font-serif text-2xl text-ink">{formatCompactUSD(value)}</span>
+        <span className="font-serif text-xl text-ink">{formatCompactUSD(value)}</span>
       </div>
-      <p className="font-mono text-[11px] leading-snug text-ink-faint">{tier.formula}</p>
-      <div className="font-mono text-[12px] text-ink-muted">
+      <div className="font-mono text-[11px] leading-snug text-ink-muted">
         {tier.variables.map((v) => formatVariable(v)).join("  ×  ")}{"  =  "}
         <span className="font-medium text-ink">{formatCompactUSD(value)}</span>
       </div>
-      <div className="flex flex-col gap-1.5 border-t border-line pt-2">
+      <div className="flex flex-col gap-1 border-t border-line pt-1.5">
         {tier.variables.map((v, i) => (
-          <div key={i} className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11.5px]">
-            <span className="text-ink-muted">{v.name}</span>
+          <div key={i} className="flex items-center gap-2 text-[11px]">
+            <span className="min-w-0 flex-1 truncate text-ink-muted">{v.name}</span>
             <ConfidenceTag confidence={v.confidence} />
-            <span className="w-full text-[11px] italic leading-snug text-ink-faint">
-              {v.citation}
-            </span>
           </div>
         ))}
       </div>
@@ -1038,28 +1034,27 @@ function MarketSlide({ slide }: { slide: SlideData }) {
   return (
     <div className={PAD}>
       <Header slide={slide} />
-      <div className="grid flex-1 items-start gap-5 lg:grid-cols-[1.35fr_1fr]">
-        <div className="flex flex-col gap-3">
+      <div className="grid flex-1 items-center gap-4 lg:grid-cols-[1.3fr_1fr]">
+        <div className="flex flex-col gap-2">
           {slide.market?.map((t) => (
             <TierCard key={t.key} tier={t} />
           ))}
         </div>
-        <div className="flex flex-col gap-3">
-          <Card className="bg-canvas">
+        <div className="flex flex-col gap-2.5">
+          <Card className="bg-canvas p-3">
             <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint">
               TAM → SAM → SOM (log scale)
             </div>
-            <MarketFunnel tiers={slide.market ?? []} />
+            <MarketFunnel tiers={slide.market ?? []} height={172} />
           </Card>
           <div className="flex flex-wrap gap-2">
             {CONFIDENCE_OPTIONS.map((c) => (
               <ConfidenceTag key={c} confidence={c} />
             ))}
           </div>
-          <p className="text-[12px] leading-snug text-ink-faint">
-            Every figure is a product of the editable variables shown — change a
-            multiplicand and the bar updates. Numbers are assumptions until each
-            citation is filled and validated.
+          <p className="text-[11px] leading-snug text-ink-faint">
+            Each figure is a product of the editable variables shown — change a
+            multiplicand and the bar updates. Citations live in Edit mode.
           </p>
         </div>
       </div>
