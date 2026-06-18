@@ -323,20 +323,56 @@ export function EditPanel({
         />
       ) : null}
 
+      {slide.imageSrc !== undefined ? (
+        <Section title="Image">
+          <TextField
+            label="Image URL (blank = placeholder)"
+            value={slide.imageSrc ?? ""}
+            onChange={(v) => set({ imageSrc: v })}
+          />
+          <TextField
+            label="Image alt text"
+            value={slide.imageAlt ?? ""}
+            onChange={(v) => set({ imageAlt: v })}
+          />
+        </Section>
+      ) : null}
+
+      {slide.images ? (
+        <ObjectListEditor
+          title="Images"
+          items={slide.images}
+          fields={[
+            { key: "src", label: "Image URL (blank = placeholder)" },
+            { key: "alt", label: "Alt text" },
+          ]}
+          make={() => ({ src: "", alt: "" })}
+          onChange={(images) => set({ images })}
+        />
+      ) : null}
+
+      {slide.inputs ? (
+        <Section title="Model inputs">
+          <StringListEditor label="Inputs" items={slide.inputs} onChange={(inputs) => set({ inputs })} />
+        </Section>
+      ) : null}
+
+      {slide.equations ? (
+        <ObjectListEditor
+          title="Equations (LaTeX)"
+          items={slide.equations}
+          fields={[
+            { key: "label", label: "Label" },
+            { key: "tex", label: "LaTeX", type: "textarea" },
+            { key: "caption", label: "Caption", type: "textarea" },
+          ]}
+          make={() => ({ label: "", tex: "", caption: "" })}
+          onChange={(equations) => set({ equations })}
+        />
+      ) : null}
+
       {slide.kind === "listing" ? (
         <>
-          <Section title="Listing photo">
-            <TextField
-              label="Image URL (blank = house placeholder)"
-              value={slide.imageSrc ?? ""}
-              onChange={(v) => set({ imageSrc: v })}
-            />
-            <TextField
-              label="Image alt text"
-              value={slide.imageAlt ?? ""}
-              onChange={(v) => set({ imageAlt: v })}
-            />
-          </Section>
           <Section title="Listing details">
             <TextField label="Price" value={slide.price ?? ""} onChange={(v) => set({ price: v })} />
             <TextField
@@ -492,6 +528,20 @@ export function EditPanel({
             </select>
           </label>
         </Section>
+      ) : null}
+
+      {slide.techAgents ? (
+        <ObjectListEditor
+          title="Pipeline agents"
+          items={slide.techAgents}
+          fields={[
+            { key: "name", label: "Name" },
+            { key: "tech", label: "Tech tag" },
+            { key: "points", label: "Bullets", type: "list" },
+          ]}
+          make={() => ({ name: "", tech: "", points: [] })}
+          onChange={(techAgents) => set({ techAgents })}
+        />
       ) : null}
 
       {slide.agents ? (

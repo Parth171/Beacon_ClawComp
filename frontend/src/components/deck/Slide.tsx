@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { ConfidenceTag, MetricCard } from "@/components/deck/MetricCard";
 import { MarketFunnel } from "@/components/deck/charts";
+import { Tex } from "@/components/deck/Math";
 import {
   CONFIDENCE_OPTIONS,
   formatCompactUSD,
@@ -342,6 +343,308 @@ function FoundersSlide({ slide }: { slide: SlideData }) {
             </div>
           </motion.div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// ── 4 · Why this problem matters (hero stat + points) ────────────────────────
+function MattersSlide({ slide }: { slide: SlideData }) {
+  const hero = slide.metrics?.[0];
+  return (
+    <div className={PAD}>
+      <Header slide={slide} />
+      <div className="grid flex-1 items-center gap-8 lg:grid-cols-[0.85fr_1fr]">
+        {hero ? (
+          <div className="flex flex-col gap-2">
+            <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
+              {hero.label}
+            </span>
+            <span className="font-serif text-[4.5rem] leading-none text-ink sm:text-[6rem]">
+              {hero.value}
+            </span>
+            {hero.sub ? <span className="text-[15px] text-ink-muted">{hero.sub}</span> : null}
+            {hero.confidence ? (
+              <div className="mt-1">
+                <ConfidenceTag confidence={hero.confidence} />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+        <div className="flex flex-col gap-3">
+          {slide.bullets?.map((b, i) => (
+            <div key={i} className="rounded-xl border border-line bg-sand/40 px-5 py-4">
+              <p className="text-[16px] leading-snug text-ink sm:text-lg">{b.text}</p>
+              {b.sub ? <p className="mt-1 text-[13.5px] text-ink-muted">{b.sub}</p> : null}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── 5 · Where Beacon fits (journey pipeline) ─────────────────────────────────
+function PipelineSlide({ slide }: { slide: SlideData }) {
+  return (
+    <div className={PAD}>
+      <Header slide={slide} />
+      <div className="flex flex-1 flex-col justify-center gap-8">
+        <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-center">
+          {slide.flow?.map((s, i, arr) => (
+            <div key={i} className="contents">
+              <div
+                className={cn(
+                  "flex flex-col items-center gap-1.5 rounded-2xl border px-5 py-6 text-center sm:w-40",
+                  s.highlight
+                    ? "border-accent bg-accent text-canvas shadow-[0_18px_44px_-20px_rgba(192,87,59,0.7)]"
+                    : "border-line bg-sand/40",
+                )}
+              >
+                <span
+                  className={cn(
+                    "font-serif text-xl sm:text-2xl",
+                    s.highlight ? "text-canvas" : "text-ink",
+                  )}
+                >
+                  {s.label}
+                </span>
+                <span
+                  className={cn(
+                    "text-[13px] leading-snug",
+                    s.highlight ? "text-canvas/85" : "text-ink-muted",
+                  )}
+                >
+                  {s.detail}
+                </span>
+              </div>
+              {i < arr.length - 1 ? (
+                <div className="flex items-center justify-center py-1 sm:px-1.5">
+                  <ArrowRight className="h-5 w-5 rotate-90 text-ink-faint sm:rotate-0" />
+                </div>
+              ) : null}
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {slide.bullets?.map((b, i) => (
+            <div key={i} className="rounded-xl border-l-2 border-accent bg-accent/[0.05] px-4 py-3.5">
+              <p className="text-[15px] leading-snug text-ink">{b.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── 6 · Technical pipeline (agents + tech + bullets) ─────────────────────────
+function TechPipelineSlide({ slide }: { slide: SlideData }) {
+  const reduce = useReducedMotion();
+  const fade = (delay: number) =>
+    reduce
+      ? {}
+      : {
+          initial: { opacity: 0, y: 14 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.5, delay, ease: EASE },
+        };
+
+  return (
+    <div className={PAD}>
+      <Header slide={slide} />
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
+        {slide.techAgents?.map((a, i, arr) => (
+          <div key={i} className="contents">
+            <motion.div
+              {...fade(0.1 + i * 0.1)}
+              className="flex w-full flex-col gap-2.5 rounded-2xl border border-line bg-sand/40 p-5 sm:w-60"
+            >
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs text-accent">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {a.tech ? (
+                  <span className="ml-auto rounded-full border border-line px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-muted">
+                    {a.tech}
+                  </span>
+                ) : null}
+              </div>
+              <div className="font-serif text-2xl leading-tight text-ink">{a.name}</div>
+              <ul className="mt-1 flex flex-col gap-2.5">
+                {a.points.map((p, pi) => (
+                  <li
+                    key={pi}
+                    className="flex gap-2 text-[15px] leading-snug text-ink-muted"
+                  >
+                    <span className="mt-[8px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+            {i < arr.length - 1 ? (
+              <div className="flex items-center justify-center sm:px-1">
+                <ArrowRight
+                  className="h-8 w-8 rotate-90 text-accent sm:rotate-0"
+                  strokeWidth={2.5}
+                />
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── 7 · Property Intelligence (vision model deep dive) ───────────────────────
+const VISION_MARKER_SETS = [
+  [
+    { top: "24%", left: "50%", label: "Roof wear" },
+    { top: "60%", left: "33%", label: "Water staining" },
+  ],
+  [
+    { top: "70%", left: "42%", label: "Foundation" },
+    { top: "38%", left: "66%", label: "Dated finishes" },
+  ],
+];
+
+function VisionImageCard({
+  image,
+  markers,
+  showPing,
+}: {
+  image: { src?: string; alt?: string };
+  markers: { top: string; left: string; label: string }[];
+  showPing: boolean;
+}) {
+  return (
+    <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-line bg-sand shadow-[0_24px_60px_-32px_rgba(26,23,20,0.4)]">
+      {image.src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={image.src} alt={image.alt ?? "Listing photo"} className="h-full w-full object-cover" />
+      ) : (
+        <HousePlaceholder />
+      )}
+      {markers.map((m, i) => (
+        <div
+          key={i}
+          className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5"
+          style={{ top: m.top, left: m.left }}
+        >
+          <span className="relative flex h-3 w-3">
+            {showPing ? (
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+            ) : null}
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-accent ring-2 ring-canvas" />
+          </span>
+          <span className="whitespace-nowrap rounded-md bg-night/85 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-cream">
+            {m.label}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function VisionSlide({ slide }: { slide: SlideData }) {
+  const reduce = useReducedMotion();
+  const fade = (delay: number) =>
+    reduce
+      ? {}
+      : {
+          initial: { opacity: 0, y: 12 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.55, delay, ease: EASE },
+        };
+
+  return (
+    <div className={PAD}>
+      <Header slide={slide} />
+      <div className="flex flex-1 flex-col justify-center gap-6">
+        {slide.subtitle ? (
+          <motion.span
+            {...fade(0.05)}
+            className="self-start rounded-full border border-line px-3.5 py-1 font-mono text-[12px] uppercase tracking-[0.14em] text-ink-muted"
+          >
+            {slide.subtitle}
+          </motion.span>
+        ) : null}
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {slide.images?.map((img, i) => (
+            <motion.div key={i} {...fade(0.15 + i * 0.12)}>
+              <VisionImageCard
+                image={img}
+                markers={VISION_MARKER_SETS[i % VISION_MARKER_SETS.length]}
+                showPing={!reduce}
+              />
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div {...fade(0.35)} className="grid gap-4 sm:grid-cols-3">
+          {slide.bullets?.map((b, i) => (
+            <div key={i} className="flex gap-2.5">
+              <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+              <p className="text-[16px] leading-snug text-ink sm:text-[17px]">{b.text}</p>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+// ── 8 · Valuation Intelligence (XGBoost diagram + equations) ─────────────────
+function ValuationSlide({ slide }: { slide: SlideData }) {
+  return (
+    <div className={PAD}>
+      <Header slide={slide} />
+      <div className="grid flex-1 items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        {/* Diagram: inputs → XGBoost → fair value */}
+        <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-col gap-2">
+            {slide.inputs?.map((inp, i) => (
+              <div
+                key={i}
+                className="rounded-lg border border-line bg-sand/50 px-3 py-2 text-center text-[12.5px] leading-tight text-ink"
+              >
+                {inp}
+              </div>
+            ))}
+          </div>
+          <ArrowRight className="h-6 w-6 shrink-0 text-accent" strokeWidth={2.5} />
+          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-accent bg-accent/[0.08] px-4 py-7 text-center">
+            <span className="font-serif text-2xl text-ink">XGBoost</span>
+            <span className="mt-0.5 text-[11px] leading-tight text-ink-muted">
+              gradient-boosted trees
+            </span>
+          </div>
+          <ArrowRight className="h-6 w-6 shrink-0 text-accent" strokeWidth={2.5} />
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-line bg-canvas px-4 py-7 text-center">
+            <span className="font-serif text-lg text-ink">Fair value</span>
+            <span className="mt-0.5 font-mono text-[11px] text-ink-muted">predicted P̂</span>
+          </div>
+        </div>
+
+        {/* Equations */}
+        <div className="flex flex-col gap-3">
+          {slide.equations?.map((eq, i) => (
+            <div key={i} className="rounded-xl border border-line bg-sand/40 px-4 py-3">
+              <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+                {eq.label}
+              </div>
+              <Tex display className="block overflow-x-auto text-ink">
+                {eq.tex}
+              </Tex>
+              {eq.caption ? (
+                <p className="mt-1.5 text-[12px] leading-snug text-ink-muted">{eq.caption}</p>
+              ) : null}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -897,6 +1200,11 @@ const RENDERERS: Record<SlideData["kind"], (p: { slide: SlideData }) => React.Re
   listing: ListingSlide,
   intro: IntroSlide,
   founders: FoundersSlide,
+  matters: MattersSlide,
+  pipeline: PipelineSlide,
+  techpipeline: TechPipelineSlide,
+  vision: VisionSlide,
+  valuation: ValuationSlide,
   title: TitleSlide,
   story: StorySlide,
   problem: ProblemSlide,
