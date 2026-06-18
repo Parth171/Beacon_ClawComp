@@ -5,16 +5,18 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
+  MonitorPlay,
   Pencil,
   Printer,
   RotateCcw,
   StickyNote,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { EditPanel } from "@/components/deck/EditPanel";
-import { Slide } from "@/components/deck/Slide";
+import { DeckStaticContext, Slide } from "@/components/deck/Slide";
+import { exportDeckToPptx } from "@/lib/deck/pptx";
 import {
   DEFAULT_DECK,
   STORAGE_KEY,
@@ -66,6 +68,11 @@ export function EditableDeck() {
   const [dir, setDir] = useState(1);
   const [editMode, setEditMode] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [pptx, setPptx] = useState<{ active: boolean; done: number }>({
+    active: false,
+    done: 0,
+  });
+  const exportRef = useRef<HTMLDivElement | null>(null);
   const reduce = useReducedMotion();
 
   // Load persisted edits once, after mount. This is intentionally an effect (not
@@ -139,6 +146,42 @@ export function EditableDeck() {
     setDeck(cloneDefault());
     setIndex(0);
   }, []);
+
+  // PPTX export: flip `active` so the off-screen capture tree mounts, then the
+  // effect below snapshots each slide and builds the file.
+  const exportPptx = useCallback(() => {
+    if (pptx.active) return;
+    setPptx({ active: true, done: 0 });
+  }, [pptx.active]);
+
+  useEffect(() => {
+    if (!pptx.active) return;
+    let cancelled = false;
+    const run = async () => {
+      // let the off-screen tree paint and charts measure before capturing
+      await new Promise((r) => setTimeout(r, 500));
+      const root = exportRef.current;
+      const nodes = root
+        ? Array.from(root.querySelectorAll<HTMLElement>(".deck-export-slide"))
+        : [];
+      try {
+        if (nodes.length) {
+          await exportDeckToPptx(nodes, "beacon-deck.pptx", (done) => {
+            if (!cancelled) setPptx((p) => (p.active ? { ...p, done } : p));
+          });
+        }
+      } catch (err) {
+        console.error("PPTX export failed", err);
+        if (!cancelled) window.alert("Sorry — the PPTX export failed. See the console for details.");
+      } finally {
+        if (!cancelled) setPptx({ active: false, done: 0 });
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [pptx.active]);
 
   // Keyboard navigation + shortcuts (ignored while typing in the editor).
   useEffect(() => {
@@ -222,9 +265,17 @@ export function EditableDeck() {
                 <Printer className="h-3.5 w-3.5" />
                 Print
               </ToolButton>
+              <ToolButton
+                onClick={exportPptx}
+                active={pptx.active}
+                title="Export as PowerPoint (.pptx) with slide transitions"
+              >
+                <MonitorPlay className="h-3.5 w-3.5" />
+                {pptx.active ? `PPTX ${pptx.done}/${total}` : "PPTX"}
+              </ToolButton>
               <ToolButton onClick={exportJson} title="Export deck content as JSON">
                 <Download className="h-3.5 w-3.5" />
-                Export
+                JSON
               </ToolButton>
               <ToolButton onClick={reset} title="Reset to default content">
                 <RotateCcw className="h-3.5 w-3.5" />
@@ -356,15 +407,36 @@ export function EditableDeck() {
       </div>
 
       {/* ── Print tree: every slide as its own page (clean PDF export) ──────── */}
-      <div className="deck-print hidden print:block">
-        {deck.slides.map((s) => (
-          <section key={s.id} className="deck-print-page">
-            <div className="deck-print-slide">
-              <Slide slide={s} />
-            </div>
-          </section>
-        ))}
-      </div>
+      <DeckStaticContext.Provider value={true}>
+        <div className="deck-print hidden print:block">
+          {deck.slides.map((s) => (
+            <section key={s.id} className="deck-print-page">
+              <div className="deck-print-slide">
+                <Slide slide={s} />
+              </div>
+            </section>
+          ))}
+        </div>
+
+        {/* ── Off-screen capture tree for PPTX export (16:9, final state) ───── */}
+        {pptx.active ? (
+          <div
+            ref={exportRef}
+            aria-hidden
+            className="pointer-events-none fixed left-[-99999px] top-0 z-[-1] no-print"
+          >
+            {deck.slides.map((s) => (
+              <div
+                key={s.id}
+                className="deck-export-slide overflow-hidden bg-canvas"
+                style={{ width: 1280, height: 720 }}
+              >
+                <Slide slide={s} />
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </DeckStaticContext.Provider>
     </div>
   );
 }

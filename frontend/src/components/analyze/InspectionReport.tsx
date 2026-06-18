@@ -210,7 +210,7 @@ export function InspectionReport({
       <section className="mt-8 flex flex-col items-start gap-4 rounded-2xl border border-line bg-sand/50 p-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
-            Agent 6 · PandaDoc
+            PandaDoc
           </p>
           <h3 className="mt-1.5 font-serif text-xl font-normal text-ink">
             Draft the Letter of Intent

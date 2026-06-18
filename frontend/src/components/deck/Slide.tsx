@@ -3,6 +3,20 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Check, Image as ImageIcon, Lock, X } from "lucide-react";
 import Image from "next/image";
+import { createContext, useContext } from "react";
+
+/**
+ * When true, slides render in their final state with entrance animations off.
+ * Used by the print tree and the PPTX export capture so neither snapshots a
+ * half-played reveal. Defaults to false → the interactive deck animates.
+ */
+export const DeckStaticContext = createContext(false);
+
+function useStatic() {
+  const reduceMotion = useReducedMotion();
+  const isStatic = useContext(DeckStaticContext);
+  return reduceMotion || isStatic;
+}
 
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { ConfidenceTag, MetricCard } from "@/components/deck/MetricCard";
@@ -120,7 +134,7 @@ function HousePlaceholder() {
 }
 
 function ListingSlide({ slide }: { slide: SlideData }) {
-  const reduce = useReducedMotion();
+  const reduce = useStatic();
   // Reveal cadence: image (0) → price (0.65) → each spec staggered → punchline last.
   const fade = (delay: number, y = 14) =>
     reduce
@@ -214,7 +228,7 @@ function ListingSlide({ slide }: { slide: SlideData }) {
 
 // ── 2 · Intro (logo + one-line) ──────────────────────────────────────────────
 function IntroSlide({ slide }: { slide: SlideData }) {
-  const reduce = useReducedMotion();
+  const reduce = useStatic();
   const fade = (delay: number) =>
     reduce
       ? {}
@@ -306,7 +320,7 @@ function Thumb({ src, alt }: { src?: string; alt: string }) {
 }
 
 function FoundersSlide({ slide }: { slide: SlideData }) {
-  const reduce = useReducedMotion();
+  const reduce = useStatic();
   const fade = (delay: number) =>
     reduce
       ? {}
@@ -440,7 +454,7 @@ function PipelineSlide({ slide }: { slide: SlideData }) {
 
 // ── 6 · Technical pipeline (agents + tech + bullets) ─────────────────────────
 function TechPipelineSlide({ slide }: { slide: SlideData }) {
-  const reduce = useReducedMotion();
+  const reduce = useStatic();
   const fade = (delay: number) =>
     reduce
       ? {}
@@ -549,7 +563,7 @@ function VisionImageCard({
 }
 
 function VisionSlide({ slide }: { slide: SlideData }) {
-  const reduce = useReducedMotion();
+  const reduce = useStatic();
   const fade = (delay: number) =>
     reduce
       ? {}
