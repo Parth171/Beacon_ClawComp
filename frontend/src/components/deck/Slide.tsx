@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Check, Image as ImageIcon, Lock } from "lucide-react";
+import { ArrowRight, Check, Image as ImageIcon, Lock, X } from "lucide-react";
 import Image from "next/image";
 
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -650,6 +650,148 @@ function ValuationSlide({ slide }: { slide: SlideData }) {
   );
 }
 
+// ── 9 · OpenClaw architecture (orchestration) ────────────────────────────────
+function ArchitectureSlide({ slide }: { slide: SlideData }) {
+  return (
+    <div className={PAD}>
+      <Header slide={slide} />
+      <div className="flex flex-1 flex-col justify-center gap-6">
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+          {/* feeding agents */}
+          <div className="flex w-full flex-col gap-2.5 sm:w-auto">
+            {slide.bullets?.map((b, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-line bg-sand/40 px-4 py-3 sm:w-56"
+              >
+                <div className="text-[15px] font-medium text-ink">{b.text}</div>
+                {b.sub ? <div className="text-[12.5px] text-ink-muted">{b.sub}</div> : null}
+              </div>
+            ))}
+          </div>
+          <ArrowRight className="h-8 w-8 rotate-90 text-accent sm:rotate-0" strokeWidth={2.5} />
+          {/* orchestrator */}
+          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-accent bg-accent/[0.08] px-8 py-11 text-center">
+            <span className="font-serif text-3xl text-ink sm:text-4xl">OpenClaw</span>
+            <span className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-muted">
+              agent orchestrator
+            </span>
+          </div>
+          <ArrowRight className="h-8 w-8 rotate-90 text-accent sm:rotate-0" strokeWidth={2.5} />
+          {/* output */}
+          {slide.verdict ? (
+            <div className="flex w-full flex-col items-center justify-center rounded-2xl border border-line bg-sand/60 px-6 py-11 text-center sm:w-56">
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent">
+                {slide.verdict.label}
+              </span>
+              <span className="mt-2 font-serif text-xl text-ink">{slide.verdict.sub}</span>
+            </div>
+          ) : null}
+        </div>
+        {slide.subtitle ? (
+          <div className="self-center rounded-full border border-line bg-sand/50 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-muted">
+            {slide.subtitle}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+// ── 11 · Go-to-market (land / beachhead / scale) ─────────────────────────────
+function GtmSlide({ slide }: { slide: SlideData }) {
+  return (
+    <div className={PAD}>
+      <Header slide={slide} />
+      <div className="grid flex-1 content-center gap-4 lg:grid-cols-3">
+        {slide.segments?.map((s, i) => {
+          const featured = s.tag.toLowerCase() === "beachhead";
+          return (
+            <div
+              key={i}
+              className={cn(
+                "flex flex-col gap-2.5 rounded-xl border p-5",
+                featured ? "border-accent bg-accent/[0.05]" : "border-line bg-sand/40",
+              )}
+            >
+              <span
+                className={cn(
+                  "self-start rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em]",
+                  featured ? "bg-accent text-canvas" : "border border-line text-ink-muted",
+                )}
+              >
+                {s.tag}
+              </span>
+              <div className="font-serif text-xl text-ink">{s.name}</div>
+              <p className="text-[13.5px] leading-snug text-ink-muted">{s.detail}</p>
+              {s.uses.length ? (
+                <ul className="mt-auto flex flex-col gap-1.5 pt-1">
+                  {s.uses.map((u, j) => (
+                    <li key={j} className="flex gap-2 text-[13px] text-ink">
+                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
+                      {u}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── 12 · Why we beat competitors (feature matrix) ────────────────────────────
+function CompetitorsSlide({ slide }: { slide: SlideData }) {
+  const c = slide.competitors;
+  const cols = c?.columns ?? [];
+  const gridCols = { gridTemplateColumns: `1.6fr repeat(${cols.length}, 0.7fr)` };
+  return (
+    <div className={PAD}>
+      <Header slide={slide} />
+      <div className="flex flex-1 items-center">
+        <div className="w-full overflow-hidden rounded-xl border border-line">
+          <div className="grid items-stretch" style={gridCols}>
+            <div className="px-4 py-3" />
+            {cols.map((col, i) => (
+              <div
+                key={i}
+                className={cn(
+                  "px-2 py-3 text-center font-mono text-[12px] uppercase tracking-[0.1em]",
+                  i === 0 ? "bg-accent/[0.08] font-medium text-accent" : "text-ink-muted",
+                )}
+              >
+                {col}
+              </div>
+            ))}
+          </div>
+          {c?.rows.map((row, ri) => (
+            <div key={ri} className="grid items-stretch border-t border-line" style={gridCols}>
+              <div className="px-4 py-2.5 text-[13.5px] text-ink">{row.feature}</div>
+              {cols.map((_, ci) => (
+                <div
+                  key={ci}
+                  className={cn(
+                    "flex items-center justify-center px-2 py-2.5",
+                    ci === 0 ? "bg-accent/[0.06]" : "",
+                  )}
+                >
+                  {row.values[ci] ? (
+                    <Check className="h-5 w-5 text-accent" strokeWidth={2.5} />
+                  ) : (
+                    <X className="h-5 w-5 text-ink-faint/50" />
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Title ──────────────────────────────────────────────────────────────────
 function TitleSlide({ slide }: { slide: SlideData }) {
   return (
@@ -1205,6 +1347,9 @@ const RENDERERS: Record<SlideData["kind"], (p: { slide: SlideData }) => React.Re
   techpipeline: TechPipelineSlide,
   vision: VisionSlide,
   valuation: ValuationSlide,
+  architecture: ArchitectureSlide,
+  gtm: GtmSlide,
+  competitors: CompetitorsSlide,
   title: TitleSlide,
   story: StorySlide,
   problem: ProblemSlide,

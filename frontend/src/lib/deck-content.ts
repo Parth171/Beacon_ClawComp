@@ -14,7 +14,7 @@
 // `confidence` label and a `citation` field. Do not delete citation TODOs.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const DECK_VERSION = 10;
+export const DECK_VERSION = 11;
 export const STORAGE_KEY = `beacon-deck-v${DECK_VERSION}`;
 
 /** Honesty label attached to every metric and market variable. */
@@ -63,6 +63,12 @@ export interface Equation {
   label: string;
   tex: string;
   caption?: string;
+}
+
+/** One feature row in a competitor matrix; `values` aligns with the columns. */
+export interface CompetitorRow {
+  feature: string;
+  values: boolean[];
 }
 
 export interface StoryBeat {
@@ -190,6 +196,9 @@ export type SlideKind =
   | "techpipeline"
   | "vision"
   | "valuation"
+  | "architecture"
+  | "gtm"
+  | "competitors"
   | "title"
   | "story"
   | "problem"
@@ -229,6 +238,9 @@ export interface Slide {
   // valuation slide
   inputs?: string[];
   equations?: Equation[];
+
+  // competitor matrix slide
+  competitors?: { columns: string[]; rows: CompetitorRow[] };
 
   // other kind-specific blocks
   story?: { beats: StoryBeat[]; outcome: string };
@@ -518,6 +530,194 @@ export const DEFAULT_DECK: Deck = {
       ],
       notes:
         "The quant slide. Left: the model is just inputs → XGBoost → fair value. Right: the three numbers we actually report, with the formulas behind them. Don't read the equations aloud — point to mispricing as the headline and let the math signal rigor.",
+    },
+
+    // 9 · OPENCLAW ARCHITECTURE — orchestration of the agents ────────────────────
+    {
+      id: "architecture",
+      kind: "architecture",
+      eyebrow: "Architecture · OpenClaw",
+      title: "One orchestrator. Three agents. One call.",
+      lead: "OpenClaw ties property risk, valuation, and neighborhood growth into a single evidence-backed recommendation.",
+      subtitle: "Built on OpenMoss research",
+      bullets: [
+        { text: "Property risk", sub: "VLM condition & structural risk" },
+        { text: "Valuation", sub: "XGBoost fair value & mispricing" },
+        { text: "Neighborhood growth", sub: "Municipal trajectory signals" },
+      ],
+      verdict: { label: "Holistic recommendation", sub: "BUY · PASS · NEGOTIATE", tone: "buy" },
+      notes:
+        "OpenClaw is the conductor — it runs the specialist agents and fuses their evidence into one call. Name OpenMoss as the research foundation underneath. The point: this isn't three disconnected tools, it's one reasoning system.",
+    },
+
+    // 10 · TAM / SAM / SOM — market sizing, bottom-up ────────────────────────────
+    {
+      id: "market",
+      kind: "market",
+      eyebrow: "Market",
+      title: "TAM, SAM, SOM.",
+      lead: "Sized bottom-up from editable assumptions — the funnel is also the growth path, from near-term capture out to the global market.",
+      market: [
+        {
+          key: "TAM",
+          label: "Global residential real estate",
+          formula: "annual residential transactions (global)  ×  analysis spend per transaction",
+          note: "Every residential transaction worldwide is a potential underwrite.",
+          confidence: "needs-validation",
+          variables: [
+            {
+              name: "Annual residential transactions, global",
+              value: 50_000_000,
+              unit: "deals/yr",
+              confidence: "needs-validation",
+              citation: "[TODO: triangulate global home-sales volume — Statista / UN-Habitat]",
+            },
+            {
+              name: "Analysis spend per transaction",
+              value: 80,
+              unit: "$/deal",
+              confidence: "assumption",
+              citation: "[Assumption: blended report price — validate]",
+            },
+          ],
+        },
+        {
+          key: "SAM",
+          label: "Targeted urban homebuyers",
+          formula: "urban homebuyers / yr in served metros  ×  annual spend per buyer",
+          note: "High-price, high-data metros where our coverage is strongest.",
+          confidence: "needs-validation",
+          variables: [
+            {
+              name: "Urban homebuyers / yr in served metros",
+              value: 3_000_000,
+              unit: "buyers/yr",
+              confidence: "needs-validation",
+              citation: "[TODO: NAR + metro transaction counts for target cities]",
+            },
+            {
+              name: "Annual spend per buyer",
+              value: 120,
+              unit: "$/yr",
+              confidence: "assumption",
+              citation: "[Assumption: subscription + report mix]",
+            },
+          ],
+        },
+        {
+          key: "SOM",
+          label: "Realistic capture in 2–3 years",
+          formula: "buyers captured in 2–3 yrs  ×  blended ACV",
+          note: "A grounded near-term target from the funnel, not a share-of-TAM guess.",
+          confidence: "assumption",
+          variables: [
+            {
+              name: "Buyers captured in 2–3 years",
+              value: 60_000,
+              unit: "buyers",
+              confidence: "assumption",
+              citation: "[Assumption: bottoms-up from funnel & conversion — validate]",
+            },
+            {
+              name: "Blended ACV",
+              value: 150,
+              unit: "$/yr",
+              confidence: "assumption",
+              citation: "[Assumption: weighted consumer + early B2B]",
+            },
+          ],
+        },
+      ],
+      notes:
+        "Lead with method, not the number. The funnel reads bottom-to-top as the growth story: SOM today → SAM as coverage expands → TAM at global scale. Invite challenges to any multiplicand — that's the honesty the product also applies to deals.",
+    },
+
+    // 11 · GO-TO-MARKET — land, beachhead, distribute ────────────────────────────
+    {
+      id: "gtm",
+      kind: "gtm",
+      eyebrow: "Go-to-market",
+      title: "Land direct, win New York, then scale.",
+      segments: [
+        {
+          name: "Direct-to-consumer reports",
+          tag: "Land",
+          detail: "Start with individual buyers paying for a report — fast feedback, immediate revenue, and the data flywheel.",
+          uses: [],
+        },
+        {
+          name: "New York",
+          tag: "Beachhead",
+          detail: "The ideal first market to prove the wedge.",
+          uses: ["High home prices", "High transaction value", "Large municipal datasets"],
+        },
+        {
+          name: "Distribution",
+          tag: "Scale",
+          detail: "Grow through the channels buyers already use.",
+          uses: ["Digital marketing", "Referral channels", "Real-estate platform integrations"],
+        },
+      ],
+      notes:
+        "Concrete and sequenced. Wedge = D2C reports (cheap to acquire, generates data). Beachhead = New York, justified by price, transaction value, and open municipal data. Then distribution scales it. Don't boil the ocean — one city, done well.",
+    },
+
+    // 12 · WHY WE BEAT COMPETITORS — feature matrix ──────────────────────────────
+    {
+      id: "competitors",
+      kind: "competitors",
+      eyebrow: "Competition",
+      title: "Built to decide, not just to list.",
+      competitors: {
+        columns: ["Beacon", "Realtor", "Zillow"],
+        rows: [
+          { feature: "Evidence-backed BUY / PASS", values: [true, false, false] },
+          { feature: "Photo condition & risk analysis", values: [true, false, false] },
+          { feature: "Mispricing vs. fair value", values: [true, false, false] },
+          { feature: "Neighborhood trajectory signals", values: [true, false, false] },
+          { feature: "Cited municipal data", values: [true, false, false] },
+          { feature: "Property listings & search", values: [false, true, true] },
+        ],
+      },
+      notes:
+        "Zillow and Realtor are listing sites; Beacon is a decision layer (ties back to slide 5). The last row is intentional honesty — they own listings, we don't, and we don't need to. Every other row is the analysis they can't do.",
+    },
+
+    // 13 · REVENUE MODEL — pricing tiers + streams ───────────────────────────────
+    {
+      id: "business",
+      kind: "business",
+      eyebrow: "Revenue model",
+      title: "SaaS for buyers. Licenses for businesses.",
+      lead: "Self-serve consumer plans fund the wedge; B2B and enterprise licenses compound the upside. Prices are working assumptions to validate.",
+      tiers: [
+        {
+          name: "Free",
+          price: "$0",
+          who: "Individual buyers",
+          features: ["[N] reports / month", "Core BUY/PASS + report", "No card required"],
+        },
+        {
+          name: "Premium",
+          price: "$[19] / mo",
+          who: "Active buyers (D2C)",
+          features: ["Unlimited reports", "Mispricing + trajectory analytics", "LOI drafting"],
+        },
+        {
+          name: "Enterprise",
+          price: "Custom",
+          who: "Lenders, insurers, brokerages",
+          features: ["Bulk & API report licenses", "Custom risk models", "Data controls & SLAs"],
+        },
+      ],
+      bullets: [
+        { text: "Consumer", sub: "Pay-per-report & monthly subscriptions" },
+        { text: "B2B", sub: "Realtors, investors & property managers — bulk report licenses" },
+        { text: "Enterprise", sub: "Insurers & mortgage lenders — custom risk reports" },
+        { text: "Upsell", sub: "Premium neighborhood-growth analytics & bespoke reports" },
+      ],
+      notes:
+        "Three price points (Free / Premium / Enterprise) plus the customer-type streams beneath them. Be explicit that the bracketed prices are placeholders pending validation. The story is mix-shift: free for velocity and data, premium for D2C revenue, enterprise for the high-ACV upside.",
     },
   ],
 };

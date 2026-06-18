@@ -279,6 +279,17 @@ export function EditPanel({
   const updateFounder = (fi: number, patch: Partial<NonNullable<Slide["founders"]>[number]>) =>
     set({ founders: slide.founders!.map((f, i) => (i === fi ? { ...f, ...patch } : f)) });
 
+  const updateCompRow = (
+    ri: number,
+    patch: Partial<{ feature: string; values: boolean[] }>,
+  ) =>
+    set({
+      competitors: {
+        ...slide.competitors!,
+        rows: slide.competitors!.rows.map((r, i) => (i === ri ? { ...r, ...patch } : r)),
+      },
+    });
+
   return (
     <div className="flex flex-col gap-4 text-ink">
       {/* Common copy */}
@@ -369,6 +380,73 @@ export function EditPanel({
           make={() => ({ label: "", tex: "", caption: "" })}
           onChange={(equations) => set({ equations })}
         />
+      ) : null}
+
+      {slide.competitors ? (
+        <Section title="Competitor matrix">
+          <StringListEditor
+            label="Columns (first = you)"
+            items={slide.competitors.columns}
+            onChange={(columns) => set({ competitors: { ...slide.competitors!, columns } })}
+          />
+          <span className={LABEL}>Rows</span>
+          {slide.competitors.rows.map((row, ri) => (
+            <div key={ri} className="flex flex-col gap-2 rounded-lg border border-line bg-sand/30 p-2.5">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] text-ink-faint">#{ri + 1}</span>
+                <IconButton
+                  label="Remove row"
+                  onClick={() =>
+                    set({
+                      competitors: {
+                        ...slide.competitors!,
+                        rows: slide.competitors!.rows.filter((_, i) => i !== ri),
+                      },
+                    })
+                  }
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </IconButton>
+              </div>
+              <TextField
+                label="Feature"
+                value={row.feature}
+                onChange={(v) => updateCompRow(ri, { feature: v })}
+              />
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                {slide.competitors!.columns.map((col, ci) => (
+                  <label key={ci} className="flex items-center gap-1.5 text-[12px] text-ink">
+                    <input
+                      type="checkbox"
+                      checked={!!row.values[ci]}
+                      onChange={(e) => {
+                        const values = [...row.values];
+                        values[ci] = e.target.checked;
+                        updateCompRow(ri, { values });
+                      }}
+                    />
+                    {col}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+          <AddButton
+            onClick={() =>
+              set({
+                competitors: {
+                  ...slide.competitors!,
+                  rows: [
+                    ...slide.competitors!.rows,
+                    { feature: "", values: slide.competitors!.columns.map(() => false) },
+                  ],
+                },
+              })
+            }
+          >
+            Add row
+          </AddButton>
+        </Section>
       ) : null}
 
       {slide.kind === "listing" ? (
