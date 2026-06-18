@@ -17,15 +17,46 @@ Built so far:
 
 ## Run locally
 
+The app is two processes: this FastAPI backend (port 8000) and the Next.js
+frontend (port 3000), which proxies `/api/analyze/stream` to the backend.
+
+### 1. Backend
+
+The canonical runtime is `.venv-mlx` (Python 3.14, real MLX models). Use it to
+get real inference; `/api/v1/health` then reports `mlx-text` / `mlx-vision`
+instead of the stubs.
+
 ```bash
 cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-uvicorn app.main:app --reload --port 8000
+source .venv-mlx/bin/activate
+uvicorn app.main:app --port 8000
 # capability check (shows mlx vs stub):
 curl localhost:8000/api/v1/health
 ```
+
+First-time setup of the venv (if it doesn't exist yet):
+
+```bash
+cd backend
+python3 -m venv .venv-mlx
+source .venv-mlx/bin/activate
+pip install -e ".[dev,mlx,vision,rag]"
+```
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install          # first time only
+npm run dev          # serves http://localhost:3000
+```
+
+The frontend reads `DEALSENSE_API_URL` (defaults to `http://127.0.0.1:8000`).
+Copy `frontend/.env.example` to `frontend/.env.local` to override it or to set
+`ANTHROPIC_API_KEY` (needed for the Agent 6 Letter of Intent route; without it
+`/api/loi` falls back to a deterministic mock).
+
+Then open **http://localhost:3000**.
 
 ## Local models (optional, for real inference)
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, RotateCcw } from "lucide-react";
+import { ExternalLink, FileText, Loader2, RotateCcw } from "lucide-react";
 
 import { MunicipalCard } from "@/components/analyze/MunicipalCard";
 import { ProvenanceBreakdown } from "@/components/analyze/ProvenanceBreakdown";
@@ -44,9 +44,13 @@ function maxRisk(p: PerImageAssessment): number {
 export function InspectionReport({
   report,
   onReset,
+  onGenerateLoi,
+  generatingLoi,
 }: {
   report: AnalyzeReport;
   onReset: () => void;
+  onGenerateLoi: () => void;
+  generatingLoi: boolean;
 }) {
   const { property, inspection } = report;
   const hero = property.images?.[0];
@@ -200,6 +204,35 @@ export function InspectionReport({
         <div className="mt-4">
           <ProvenanceBreakdown items={inspection.breakdown} />
         </div>
+      </section>
+
+      {/* Agent 6 — letter of intent */}
+      <section className="mt-8 flex flex-col items-start gap-4 rounded-2xl border border-line bg-sand/50 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+            Agent 6 · PandaDoc
+          </p>
+          <h3 className="mt-1.5 font-serif text-xl font-normal text-ink">
+            Draft the Letter of Intent
+          </h3>
+          <p className="mt-1 max-w-md text-sm leading-relaxed text-ink-muted">
+            Turn this analysis into a presentable, signable LOI — valuation, neighbourhood
+            trajectory, five-year cost projections, and offer terms in a 2–3 page document.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onGenerateLoi}
+          disabled={generatingLoi}
+          className="inline-flex h-11 shrink-0 items-center gap-2 rounded-md bg-accent px-6 text-sm font-medium text-cream transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {generatingLoi ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <FileText className="h-4 w-4" />
+          )}
+          {generatingLoi ? "Drafting…" : "Generate Letter of Intent"}
+        </button>
       </section>
 
       {inspection.notes.length ? (

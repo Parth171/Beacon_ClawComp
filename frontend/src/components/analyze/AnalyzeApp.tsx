@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AgentRun } from "@/components/analyze/AgentRun";
 import { InspectionReport } from "@/components/analyze/InspectionReport";
 import { PasteForm } from "@/components/analyze/PasteForm";
+import { LoiDocument } from "@/components/loi/LoiDocument";
 import {
   applyEvent,
   initialAnalyzeState,
@@ -14,8 +15,10 @@ import {
 } from "@/lib/analyze/events";
 import { runAnalyze } from "@/lib/analyze/stream";
 import type { AnalyzeReport } from "@/lib/analyze/types";
+import { generateLoi } from "@/lib/loi/generate";
+import type { LoiData } from "@/lib/loi/types";
 
-type View = "idle" | "running" | "report" | "error";
+type View = "idle" | "running" | "report" | "loi" | "error";
 
 const FADE = {
   initial: { opacity: 0, y: 12 },
@@ -30,6 +33,8 @@ export function AnalyzeApp() {
   const [report, setReport] = useState<AnalyzeReport | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [loiData, setLoiData] = useState<LoiData | null>(null);
+  const [generatingLoi, setGeneratingLoi] = useState(false);
 
   async function handleSubmit(url: string) {
     setSubmitting(true);
@@ -52,11 +57,29 @@ export function AnalyzeApp() {
     }
   }
 
+  async function handleGenerateLoi() {
+    if (!report || generatingLoi) return;
+    setGeneratingLoi(true);
+    setErrorMsg(null);
+    try {
+      // Reuse a prior draft if one exists for this report.
+      const data = loiData ?? (await generateLoi(report));
+      setLoiData(data);
+      setView("loi");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Could not generate the letter of intent.");
+      setView("error");
+    } finally {
+      setGeneratingLoi(false);
+    }
+  }
+
   function reset() {
     setView("idle");
     setLive(null);
     setReport(null);
     setErrorMsg(null);
+    setLoiData(null);
   }
 
   return (
@@ -71,7 +94,16 @@ export function AnalyzeApp() {
         </motion.div>
       ) : view === "report" && report ? (
         <motion.div key="report" {...FADE}>
-          <InspectionReport report={report} onReset={reset} />
+          <InspectionReport
+            report={report}
+            onReset={reset}
+            onGenerateLoi={handleGenerateLoi}
+            generatingLoi={generatingLoi}
+          />
+        </motion.div>
+      ) : view === "loi" && report && loiData ? (
+        <motion.div key="loi" {...FADE}>
+          <LoiDocument data={loiData} report={report} onBack={() => setView("report")} />
         </motion.div>
       ) : view === "error" ? (
         <motion.div key="error" {...FADE} className="mx-auto max-w-lg text-center">

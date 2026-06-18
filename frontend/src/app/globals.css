@@ -96,3 +96,90 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Agent 6 · Letter of Intent print styles ──────────────────────────── */
+@media print {
+  @page {
+    size: letter;
+    margin: 14mm;
+  }
+
+  /* keep brand + chart colors when printing */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* strip screen chrome around the document */
+  .loi-print-wrap {
+    padding: 0 !important;
+  }
+
+  .loi-doc {
+    max-width: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* one document section per printed page */
+  .loi-page {
+    break-after: page;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  .loi-page:last-child {
+    break-after: auto;
+  }
+
+  /* don't split cards, charts, or tables across pages */
+  .loi-doc section section,
+  .loi-doc table,
+  .recharts-responsive-container {
+    break-inside: avoid;
+  }
+}
+
+/* ── Deck · pitch slideshow print styles ──────────────────────────────────── */
+@media print {
+  /* Named page keeps the deck landscape without disturbing the LOI's portrait
+     letter @page above (each route only prints one of the two). */
+  @page deck {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+
+  /* one slide per printed page */
+  .deck-print-page {
+    page: deck;
+    break-after: page;
+    break-inside: avoid;
+  }
+  .deck-print-page:last-child {
+    break-after: auto;
+  }
+
+  /* fixed slide frame so layouts read like slides, not reflowed text */
+  .deck-print-slide {
+    height: 180mm;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  /* on screen the slide body fills the stage and scrolls; in print let it lay
+     out naturally inside the fixed slide frame instead of clipping a scroll area */
+  .deck-print .deck-slide-pad {
+    height: 100% !important;
+    overflow: visible !important;
+  }
+
+  .deck-print .recharts-wrapper {
+    break-inside: avoid;
+  }
+}

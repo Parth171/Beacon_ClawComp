@@ -12,15 +12,15 @@ dependencies = [
     "fastapi",
     "httpx",
     "numpy",
+    "opencv-python-headless",
     "pydantic",
     "pydantic-settings",
     "uvicorn",
 ]
 
 [project.optional-dependencies]
-# Computer-vision preprocessing for Agent 3 (image_prep).
+# PIL decoding for local MLX vision inference (mlx_vision).
 vision = [
-    "opencv-python-headless",
     "pillow",
 ]
 # Local Apple-Silicon inference. Install in a Python 3.11+ env for best
